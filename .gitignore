@@ -1,0 +1,29 @@
+# 密钥文件永不入库（含 .env.local.* 等备份名）
+.env.local*
+
+# 依赖与产物
+node_modules/
+ts/runs/*
+# —— 例外：关键评测证据随仓库走（README 指标的可复现证据）——
+!ts/runs/20261003145728/
+!ts/runs/agent-real-r5/
+!ts/runs/ms-deepseek/
+!ts/runs/ms-qwen/
+!ts/runs/ms-gemini/
+!ts/runs/agent-20261005080805/
+!ts/runs/agent-20261005083150/
+!ts/runs/workloop-20261005091942/
+!ts/runs/evolve-log.md
+ts/promptfoo/pf-*.log
+ts/promptfoo/pf-copy.db
+
+# 发布包构建产物（scripts/release.mjs 可重新生成）
+dist/
+
+# 本地 AI 工具 / 编辑器私有状态（勿提交）
+.mimosa/
+.zcode/
+.zcodeignore
+.workbuddy/
+.workbuddy-ai/
+.slidep/

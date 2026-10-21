@@ -1,0 +1,25 @@
+{
+  "name": "aicguard-ts",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "AICGuard · 中文大模型安全评测与护栏平台（TypeScript 版）",
+  "engines": {
+    "node": ">=23.6"
+  },
+  "scripts": {
+    "start": "node src/run.ts",
+    "agro": "node src/run.ts --target agro",
+    "no-expand": "node src/run.ts --expand 0",
+    "test": "node --test \"tests/**/*.test.ts\"",
+    "typecheck": "tsc --noEmit",
+    "gates": "node scripts/fp-regression.ts && node scripts/harness-sanity.ts",
+    "check": "npm run typecheck && npm run test && npm run gates"
+  },
+  "optionalDependencies": {},
+  "comment": "核心运行零第三方依赖，用 Node 原生类型剥离直接运行 .ts。devDependencies 仅供类型检查（M0 引入，见 docs/16）；promptfoo 为可选增强，见 promptfoo/ 目录。",
+  "devDependencies": {
+    "@types/node": "24.19.2",
+    "typescript": "7.0.2"
+  }
+}

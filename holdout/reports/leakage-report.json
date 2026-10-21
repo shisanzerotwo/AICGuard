@@ -1,0 +1,649 @@
+{
+  "tool": "holdout-lint",
+  "version": 1,
+  "timeUtc": "2026-10-12T17:01:52.752Z",
+  "spec": "holdout/spec.md §3/§4（v1）",
+  "status": "checked",
+  "devDir": "D:\\GitHub\\xiangmu\\rjcx-reliability\\data",
+  "holdoutDir": "D:\\GitHub\\xiangmu\\rjcx-reliability\\holdout",
+  "devItems": 355,
+  "checks": {
+    "isolation": {
+      "holdoutUnderData": false,
+      "entryPointRefs": [],
+      "entryPointsScanned": 11
+    },
+    "selfTest": {
+      "ran": true,
+      "seedDevId": "DI-01",
+      "seedDevFile": "probes_zh.jsonl",
+      "positive": {
+        "containment": 1,
+        "mustExceed": 0.45,
+        "passed": true
+      },
+      "negative": {
+        "containment": 0,
+        "mustStayBelow": 0.3,
+        "passed": true
+      }
+    },
+    "hygiene": {
+      "lines": 90,
+      "pairs": 30,
+      "blankLines": 0,
+      "hasBom": false,
+      "hasCrlf": false,
+      "familyCounts": {
+        "direct_injection": 5,
+        "indirect_injection": 5,
+        "roleplay_jailbreak": 5,
+        "encoding_obfuscation": 5,
+        "multi_turn_induction": 5,
+        "data_exfiltration": 5
+      },
+      "secretHits": 0,
+      "fileSha256": "b0cce82eb00d26667aea05ff6a183952c38df606cf599b9d6f1bbae0b4fc9419"
+    },
+    "leakage": {
+      "devItems": 355,
+      "devSameLangItems": 84,
+      "maxOverlapThreshold": 0.45,
+      "warnOverlapThreshold": 0.3,
+      "worst": {
+        "v": 0.1311,
+        "pairId": "HL-DE-01",
+        "devId": "II-10",
+        "devFile": "probes_zh.jsonl"
+      },
+      "perPair": [
+        {
+          "pairId": "HL-DE-01",
+          "family": "data_exfiltration",
+          "leakageTier": "rewritten-hard",
+          "textSha256": "0b3454c9ff22d594c254e6f7207852afc983dcf04ae8f4e515264aeb0593886b",
+          "normLen": 64,
+          "topDevSameLang": {
+            "id": "II-10",
+            "file": "probes_zh.jsonl",
+            "containment": 0.1311
+          },
+          "topDevAnyLang": {
+            "id": "EV-53",
+            "file": "probes_candidates.jsonl",
+            "containment": 0.1311
+          }
+        },
+        {
+          "pairId": "HL-RP-05",
+          "family": "roleplay_jailbreak",
+          "leakageTier": "new",
+          "textSha256": "f2ff5c5eb2c63390a7c3e8bf5a0d334d045052c0e01f53822e8aa0cd53b54b6d",
+          "normLen": 64,
+          "topDevSameLang": {
+            "id": "RJ-05",
+            "file": "probes_zh.jsonl",
+            "containment": 0.1148
+          },
+          "topDevAnyLang": {
+            "id": "RJ-05",
+            "file": "probes_zh.jsonl",
+            "containment": 0.1148
+          }
+        },
+        {
+          "pairId": "HL-DE-05",
+          "family": "data_exfiltration",
+          "leakageTier": "new",
+          "textSha256": "5c6e127c4ff42387db80276acdc5c6ef0d7badf1441d046d0457ad00fbbcf56a",
+          "normLen": 55,
+          "topDevSameLang": {
+            "id": "DE-02",
+            "file": "probes_zh.jsonl",
+            "containment": 0.1132
+          },
+          "topDevAnyLang": {
+            "id": "EV-57",
+            "file": "probes_candidates.jsonl",
+            "containment": 0.1509
+          }
+        },
+        {
+          "pairId": "HL-DI-05",
+          "family": "direct_injection",
+          "leakageTier": "new",
+          "textSha256": "19fbed9847e350f09a92c6ea134318e6f75ca67962b7881b859e2a3f8bf46106",
+          "normLen": 55,
+          "topDevSameLang": {
+            "id": "EV-17",
+            "file": "probes_zh.jsonl",
+            "containment": 0.1111
+          },
+          "topDevAnyLang": {
+            "id": "EV-17",
+            "file": "probes_zh.jsonl",
+            "containment": 0.1111
+          }
+        },
+        {
+          "pairId": "HL-EN-05",
+          "family": "encoding_obfuscation",
+          "leakageTier": "new",
+          "textSha256": "86f51649c86905962f88140a998c76134675feeddc9ac429d0eb1b2ccbf4131d",
+          "normLen": 46,
+          "topDevSameLang": {
+            "id": "II-03",
+            "file": "probes_zh.jsonl",
+            "containment": 0.1111
+          },
+          "topDevAnyLang": {
+            "id": "II-03",
+            "file": "probes_zh.jsonl",
+            "containment": 0.1111
+          }
+        },
+        {
+          "pairId": "HL-DI-01",
+          "family": "direct_injection",
+          "leakageTier": "rewritten-hard",
+          "textSha256": "7817d5fbf55a07742218c7457648e11af13755175afd2d94379a743d43bb7875",
+          "normLen": 65,
+          "topDevSameLang": {
+            "id": "DE-02",
+            "file": "probes_zh.jsonl",
+            "containment": 0.1094
+          },
+          "topDevAnyLang": {
+            "id": "DE-02",
+            "file": "probes_zh.jsonl",
+            "containment": 0.1094
+          }
+        },
+        {
+          "pairId": "HL-DE-02",
+          "family": "data_exfiltration",
+          "leakageTier": "rewritten-hard",
+          "textSha256": "fbe615b5545079d3a7ca506b6f2bcb4981ad248db75001568afae980eaddffa3",
+          "normLen": 63,
+          "topDevSameLang": {
+            "id": "DE-08",
+            "file": "probes_zh.jsonl",
+            "containment": 0.0984
+          },
+          "topDevAnyLang": {
+            "id": "DE-08",
+            "file": "probes_zh.jsonl",
+            "containment": 0.0984
+          }
+        },
+        {
+          "pairId": "HL-DE-03",
+          "family": "data_exfiltration",
+          "leakageTier": "new",
+          "textSha256": "af3e54bce85abd01c2fa352592c700fc78e4e5b940127b8ada27f100dc5d4306",
+          "normLen": 52,
+          "topDevSameLang": {
+            "id": "II-02",
+            "file": "probes_zh.jsonl",
+            "containment": 0.098
+          },
+          "topDevAnyLang": {
+            "id": "EV-07",
+            "file": "probes_candidates.jsonl",
+            "containment": 0.1176
+          }
+        },
+        {
+          "pairId": "HL-DI-02",
+          "family": "direct_injection",
+          "leakageTier": "rewritten-hard",
+          "textSha256": "1bdc546f4db5b2028057831b386a3d45b7994abc9820e18864d1f2d93cc84b66",
+          "normLen": 55,
+          "topDevSameLang": {
+            "id": "DI-03",
+            "file": "probes_zh.jsonl",
+            "containment": 0.0926
+          },
+          "topDevAnyLang": {
+            "id": "EV-47",
+            "file": "probes_candidates.jsonl",
+            "containment": 0.1296
+          }
+        },
+        {
+          "pairId": "HL-RP-01",
+          "family": "roleplay_jailbreak",
+          "leakageTier": "rewritten-hard",
+          "textSha256": "113e0b1b101ab193c0157284f2532f40f9e540a232829df919a51bb2468ed8c6",
+          "normLen": 57,
+          "topDevSameLang": {
+            "id": "RJ-04",
+            "file": "probes_zh.jsonl",
+            "containment": 0.0909
+          },
+          "topDevAnyLang": {
+            "id": "EV-34",
+            "file": "probes_candidates.jsonl",
+            "containment": 0.1091
+          }
+        },
+        {
+          "pairId": "HL-II-02",
+          "family": "indirect_injection",
+          "leakageTier": "rewritten-hard",
+          "textSha256": "c469b521cd1314cf5fa296ab12d4ca4f4e70e36d8833ec81500461d086169c3e",
+          "normLen": 59,
+          "topDevSameLang": {
+            "id": "II-10",
+            "file": "probes_zh.jsonl",
+            "containment": 0.0862
+          },
+          "topDevAnyLang": {
+            "id": "EV-53",
+            "file": "probes_candidates.jsonl",
+            "containment": 0.0862
+          }
+        },
+        {
+          "pairId": "HL-II-01",
+          "family": "indirect_injection",
+          "leakageTier": "rewritten-hard",
+          "textSha256": "383f81429a0924b20ecc9693e40ace2556ec4c3398f482b17646a0d9921a648a",
+          "normLen": 72,
+          "topDevSameLang": {
+            "id": "DE-05",
+            "file": "probes_zh.jsonl",
+            "containment": 0.0857
+          },
+          "topDevAnyLang": {
+            "id": "EV-08",
+            "file": "probes_candidates.jsonl",
+            "containment": 0.0857
+          }
+        },
+        {
+          "pairId": "HL-MT-04",
+          "family": "multi_turn_induction",
+          "leakageTier": "new",
+          "textSha256": "14f2029983ced699bc01e82b68049fd1a3422e43ef89619108f8e8b34e87b2ce",
+          "normLen": 87,
+          "topDevSameLang": {
+            "id": "DE-02",
+            "file": "probes_zh.jsonl",
+            "containment": 0.0843
+          },
+          "topDevAnyLang": {
+            "id": "EV-08",
+            "file": "probes_candidates.jsonl",
+            "containment": 0.0964
+          }
+        },
+        {
+          "pairId": "HL-DI-03",
+          "family": "direct_injection",
+          "leakageTier": "rewritten-hard",
+          "textSha256": "7b2791212df82330035230b784f52b466c87d7d88f82a37920fb6adbbed8aeb8",
+          "normLen": 50,
+          "topDevSameLang": {
+            "id": "EO-03",
+            "file": "probes_zh.jsonl",
+            "containment": 0.0816
+          },
+          "topDevAnyLang": {
+            "id": "AG-10",
+            "file": "probes_agro.jsonl",
+            "containment": 0.0816
+          }
+        },
+        {
+          "pairId": "HL-EN-03",
+          "family": "encoding_obfuscation",
+          "leakageTier": "new",
+          "textSha256": "c58bc5e8552377d3af870982553a3cb60add2bf283dc3aaec4165e1ce107b375",
+          "normLen": 52,
+          "topDevSameLang": {
+            "id": "DI-08",
+            "file": "probes_zh.jsonl",
+            "containment": 0.0784
+          },
+          "topDevAnyLang": {
+            "id": "RJ-MT-04",
+            "file": "probes_mt_zh.jsonl",
+            "containment": 0.0784
+          }
+        },
+        {
+          "pairId": "HL-RP-02",
+          "family": "roleplay_jailbreak",
+          "leakageTier": "rewritten-hard",
+          "textSha256": "43115e4d20db0263a649ae28a9389d5f61b512a987bca4bdfe68cd8e72914bfe",
+          "normLen": 75,
+          "topDevSameLang": {
+            "id": "DI-01",
+            "file": "probes_zh.jsonl",
+            "containment": 0.0781
+          },
+          "topDevAnyLang": {
+            "id": "EV-31",
+            "file": "probes_candidates.jsonl",
+            "containment": 0.0938
+          }
+        },
+        {
+          "pairId": "HL-II-03",
+          "family": "indirect_injection",
+          "leakageTier": "rewritten-hard",
+          "textSha256": "e3ad14ab9005f91bf9a1a082ecdc3c425673c2f8cec7375a07f6853aafcf5919",
+          "normLen": 58,
+          "topDevSameLang": {
+            "id": "DI-05",
+            "file": "probes_zh.jsonl",
+            "containment": 0.0741
+          },
+          "topDevAnyLang": {
+            "id": "EV-53",
+            "file": "probes_candidates.jsonl",
+            "containment": 0.0926
+          }
+        },
+        {
+          "pairId": "HL-II-04",
+          "family": "indirect_injection",
+          "leakageTier": "new",
+          "textSha256": "3d3d81ff9b3bdc7b8f6e1a97dff0e669c8dc09e4b81465593a04d3ecf3a78af0",
+          "normLen": 55,
+          "topDevSameLang": {
+            "id": "RJ-01",
+            "file": "probes_zh.jsonl",
+            "containment": 0.0741
+          },
+          "topDevAnyLang": {
+            "id": "EV-38",
+            "file": "probes_candidates.jsonl",
+            "containment": 0.0741
+          }
+        },
+        {
+          "pairId": "HL-EN-01",
+          "family": "encoding_obfuscation",
+          "leakageTier": "rewritten-hard",
+          "textSha256": "ad5f00540d565c974c97474c3f657919734f448b948e82a6fe3781ee995c98be",
+          "normLen": 55,
+          "topDevSameLang": {
+            "id": "DI-08",
+            "file": "probes_zh.jsonl",
+            "containment": 0.0741
+          },
+          "topDevAnyLang": {
+            "id": "DI-08",
+            "file": "probes_zh.jsonl",
+            "containment": 0.0741
+          }
+        },
+        {
+          "pairId": "HL-MT-01",
+          "family": "multi_turn_induction",
+          "leakageTier": "rewritten-hard",
+          "textSha256": "3442e8e8d0e684530e084ae313a6486d983127044cafaf9af6370ec159c5bab4",
+          "normLen": 88,
+          "topDevSameLang": {
+            "id": "EV-18",
+            "file": "probes_zh.jsonl",
+            "containment": 0.0732
+          },
+          "topDevAnyLang": {
+            "id": "EV-18",
+            "file": "probes_zh.jsonl",
+            "containment": 0.0732
+          }
+        },
+        {
+          "pairId": "HL-DI-04",
+          "family": "direct_injection",
+          "leakageTier": "new",
+          "textSha256": "d635c02d190607cfcd12d96a1dba765547ca3736e411d3d3c0cae0ac3017745c",
+          "normLen": 47,
+          "topDevSameLang": {
+            "id": "MT-10",
+            "file": "probes_zh.jsonl",
+            "containment": 0.0652
+          },
+          "topDevAnyLang": {
+            "id": "MT-10",
+            "file": "probes_zh.jsonl",
+            "containment": 0.0652
+          }
+        },
+        {
+          "pairId": "HL-II-05",
+          "family": "indirect_injection",
+          "leakageTier": "new",
+          "textSha256": "5ac67149df97af599a2d97ddf0f17ca6aa0273e9a9e8ea9cd2373248077c6af8",
+          "normLen": 65,
+          "topDevSameLang": {
+            "id": "II-05",
+            "file": "probes_zh.jsonl",
+            "containment": 0.0635
+          },
+          "topDevAnyLang": {
+            "id": "PC-02",
+            "file": "sanity_positive.jsonl",
+            "containment": 0.0794
+          }
+        },
+        {
+          "pairId": "HL-DE-04",
+          "family": "data_exfiltration",
+          "leakageTier": "new",
+          "textSha256": "dda1846d7a2bd43d66a5f16f00a694a5622407fd099764716c467a2fa51321e8",
+          "normLen": 54,
+          "topDevSameLang": {
+            "id": "EV-13",
+            "file": "probes_zh.jsonl",
+            "containment": 0.0566
+          },
+          "topDevAnyLang": {
+            "id": "BN-96",
+            "file": "benign_zh.jsonl",
+            "containment": 0.0755
+          }
+        },
+        {
+          "pairId": "HL-RP-04",
+          "family": "roleplay_jailbreak",
+          "leakageTier": "new",
+          "textSha256": "b0ad03b2638d97265f1e8d6d7b024bf3493f9e5e8ebb2cd8179ce81fb7b4f088",
+          "normLen": 60,
+          "topDevSameLang": {
+            "id": "DI-09",
+            "file": "probes_zh.jsonl",
+            "containment": 0.0536
+          },
+          "topDevAnyLang": {
+            "id": "BN-92",
+            "file": "benign_zh.jsonl",
+            "containment": 0.0536
+          }
+        },
+        {
+          "pairId": "HL-RP-03",
+          "family": "roleplay_jailbreak",
+          "leakageTier": "rewritten-hard",
+          "textSha256": "767be9156700ec37e1fd5bcd0c348526901b2ac4a58439471fc67ac8378c8fd8",
+          "normLen": 66,
+          "topDevSameLang": {
+            "id": "RJ-08",
+            "file": "probes_zh.jsonl",
+            "containment": 0.0492
+          },
+          "topDevAnyLang": {
+            "id": "AG-20",
+            "file": "probes_agro.jsonl",
+            "containment": 0.0656
+          }
+        },
+        {
+          "pairId": "HL-MT-05",
+          "family": "multi_turn_induction",
+          "leakageTier": "new",
+          "textSha256": "25b764db7dd85173e999e2c87fa79a1f44cdf93ddaf4460d521312fd170e3f09",
+          "normLen": 79,
+          "topDevSameLang": {
+            "id": "RJ-01",
+            "file": "probes_zh.jsonl",
+            "containment": 0.0405
+          },
+          "topDevAnyLang": {
+            "id": "EV-38",
+            "file": "probes_candidates.jsonl",
+            "containment": 0.0541
+          }
+        },
+        {
+          "pairId": "HL-MT-02",
+          "family": "multi_turn_induction",
+          "leakageTier": "rewritten-hard",
+          "textSha256": "7b0ab6866932f9b62a4fc6014ea55f9e338be213a966e90f8162e263c5f31a7e",
+          "normLen": 82,
+          "topDevSameLang": {
+            "id": "EV-18",
+            "file": "probes_zh.jsonl",
+            "containment": 0.0385
+          },
+          "topDevAnyLang": {
+            "id": "EV-18",
+            "file": "probes_zh.jsonl",
+            "containment": 0.0385
+          }
+        },
+        {
+          "pairId": "HL-EN-02",
+          "family": "encoding_obfuscation",
+          "leakageTier": "rewritten-hard",
+          "textSha256": "ed215645c9f47748f5202e45f9cdfe86f8dcbd2ad9d90e7fd1d297cd4ff848aa",
+          "normLen": 63,
+          "topDevSameLang": {
+            "id": "DI-04",
+            "file": "probes_zh.jsonl",
+            "containment": 0.0323
+          },
+          "topDevAnyLang": {
+            "id": "BN-08",
+            "file": "benign_zh.jsonl",
+            "containment": 0.0484
+          }
+        },
+        {
+          "pairId": "HL-EN-04",
+          "family": "encoding_obfuscation",
+          "leakageTier": "new",
+          "textSha256": "3de18a2c53b46d7defd77879d395b3750be77d37ca5f601769256c19379e1171",
+          "normLen": 81,
+          "topDevSameLang": {
+            "id": "MT-10",
+            "file": "probes_zh.jsonl",
+            "containment": 0.025
+          },
+          "topDevAnyLang": {
+            "id": "EV-53",
+            "file": "probes_candidates.jsonl",
+            "containment": 0.0375
+          }
+        },
+        {
+          "pairId": "HL-MT-03",
+          "family": "multi_turn_induction",
+          "leakageTier": "new",
+          "textSha256": "a81bf9199ae4cb6735d64a2c8ab87de7b4048a5ab8ca281ad924882619af4577",
+          "normLen": 88,
+          "topDevSameLang": {
+            "id": "RJ-01",
+            "file": "probes_zh.jsonl",
+            "containment": 0.0241
+          },
+          "topDevAnyLang": {
+            "id": "BN-31",
+            "file": "benign_zh.jsonl",
+            "containment": 0.0361
+          }
+        }
+      ]
+    },
+    "rag": {
+      "devDocs": [
+        "01-作品方案.md",
+        "02-测试报告.md",
+        "03-核心算法说明.md",
+        "04-软件说明文档.md",
+        "_提交前自查.md",
+        "给小朋友讲AICGuard.md"
+      ],
+      "docs": [
+        {
+          "file": "irrigation-drainage.md",
+          "chars": 1169,
+          "sha256": "65fede15ef1fef372badfe7959eeda764a4ad24e9a425d01f64f4d27e021d572",
+          "topDev": "01-作品方案.md",
+          "containment": 0.1015
+        },
+        {
+          "file": "pest-monitoring.md",
+          "chars": 1126,
+          "sha256": "980c87ae2f30c5e50162db305ec6588eaa69a776ef74a38d78386e0e26af244f",
+          "topDev": "01-作品方案.md",
+          "containment": 0.1795
+        },
+        {
+          "file": "seedling-transplant.md",
+          "chars": 755,
+          "sha256": "2ae21ca19de4320627748ad8fd663d43fc169015dddb52dd9f811b56eeab70d9",
+          "topDev": "01-作品方案.md",
+          "containment": 0.181
+        },
+        {
+          "file": "soil-amendment.md",
+          "chars": 678,
+          "sha256": "f85dd5dcd4373c9db0c30c3def638f14c5ee59aad491dafac259870bfc840b41",
+          "topDev": "01-作品方案.md",
+          "containment": 0.1579
+        },
+        {
+          "file": "storage-preservation.md",
+          "chars": 1126,
+          "sha256": "e326a743720a0a05d7773f04403c87a4531877fed88f88582cf7965d7204b559",
+          "topDev": "01-作品方案.md",
+          "containment": 0.1165
+        }
+      ],
+      "worstDocLeak": {
+        "v": 0.181,
+        "doc": "seedling-transplant.md",
+        "dev": "01-作品方案.md"
+      },
+      "attacks": {
+        "present": true,
+        "lines": 30,
+        "ids": 15,
+        "kindCounts": {
+          "instruction_override": 3,
+          "truncation_edge": 3,
+          "title_only": 3,
+          "fake_system_authorization": 3,
+          "fake_tool_result": 3
+        },
+        "secretHits": 0,
+        "sha256": "0b8b0ed4196a49e8a4f7537e2be22b2c7870020edf0e2d7c1c85ba7e7edba8fd"
+      },
+      "benign": {
+        "present": true,
+        "lines": 20,
+        "uniqueIds": 20,
+        "sha256": "02dd4d8ef05e3a5b5fa02c78cfab64adaf846d01932e3e4e24a11080670e48bd"
+      }
+    }
+  },
+  "violations": [],
+  "warnings": [],
+  "notes": [],
+  "pass": true
+}

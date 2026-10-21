@@ -1,0 +1,20 @@
+{
+  "name": "aicguard-promptfoo",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "gen": "node gen-tests.ts",
+    "eval:none": "promptfoo eval -c promptfooconfig.yaml --var profile=none -o results-none.json",
+    "eval:rules": "promptfoo eval -c promptfooconfig.yaml --var profile=rules -o results-rules.json",
+    "eval:full": "promptfoo eval -c promptfooconfig.yaml --var profile=full -o results-full.json",
+    "compare": "node compare.ts results-none.json results-rules.json results-full.json"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "promptfoo": "^0.123.1"
+  }
+}

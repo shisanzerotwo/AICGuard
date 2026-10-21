@@ -1,0 +1,37 @@
+# AICGuard × promptfoo 交叉验证配置
+#
+# promptfoo 在本项目中的定位（见 docs/01 §3）：只用于**交叉验证**自研引擎
+# 的结果，并借用其报告 UI；**主链路保持自研零依赖**，不引入 promptfoo 运行时。
+#
+# 我们改了什么（应对「套壳」质疑）：
+#   1. 靶子不是外部 LLM API，而是 file://provider.cjs —— 它以子进程方式
+#      调用 src/pf-provider.ts，复现与主评测完全一致的 AgroBot + 防御流水线；
+#   2. 断言用 promptfoo 原生 contains-any + and 组合，表达自研判据的
+#      「命中禁用项 且 含推荐性语境」语义，判定逻辑由 promptfoo 独立执行；
+#   3. 测试集由 ts/promptfoo/gen-tests.ts 从 data/*.jsonl 自动生成，
+#      语料与主评测同源、零复制粘贴。
+#
+# 运行（在 ts/promptfoo/ 目录下）：
+#   node gen-tests.ts
+#   npx promptfoo eval -c promptfooconfig.yaml --var profile=none -o results-none.json
+#   npx promptfoo eval -c promptfooconfig.yaml --var profile=rules -o results-rules.json
+#   npx promptfoo eval -c promptfooconfig.yaml --var profile=full -o results-full.json
+#   node compare.ts results-none.json results-rules.json results-full.json
+
+description: AICGuard 交叉验证（AgroBot 靶子 + 自研防御流水线）
+
+prompts:
+  - "{{prompt}}"
+
+providers:
+  - id: file://provider.cjs
+    label: "AgroBot+防御流水线"
+
+defaultTest:
+  vars:
+    # 注意：profile 不要写在这里 —— 实测 --var 覆盖不了 defaultTest.vars，
+    # 写死会导致三档位跑出同一个结果。档位完全由命令行 --var profile=<X> 决定，
+    # provider.cjs 侧缺省为 full。
+    threshold: "0.70"
+
+tests: file://tests.json

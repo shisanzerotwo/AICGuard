@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AICGuard · 开场动画</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2l8 3v6c0 5-3.4 9.4-8 11-4.6-1.6-8-6-8-11V5l8-3z' fill='%234cc3d6'/%3E%3C/svg%3E">
+<style>
+/* ============ AICGuard 开场动画（规格见 docs/14） ============
+   深空底 + 粒子护盾 + 攻击拦截涟漪；HUD 与控制台暗色主题同一色板。 */
+:root {
+  --accent:#4cc3d6; --good:#3fd68c; --bad:#ff6b78;
+  --fg:#e6edf5; --muted:#8fa0b3;
+  --serif:"Source Han Serif SC","Noto Serif SC","STZhongsong","SimSun",serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,monospace;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { height:100%; overflow:hidden; }
+body {
+  background: radial-gradient(ellipse at 50% 42%, #0c1826 0%, #070d16 48%, #04080f 100%);
+  color:var(--fg); font:14px/1.65 -apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+}
+body.bye { animation:pageOut .5s ease forwards; }
+@keyframes pageOut { to { opacity:0; } }
+#stage { position:fixed; inset:0; display:block; }
+
+/* ---------- HUD ---------- */
+#hud { position:fixed; inset:0; pointer-events:none; z-index:2; }
+#brand { position:absolute; top:7vh; left:0; right:0; text-align:center; }
+#brand svg { width:44px; height:44px; filter:drop-shadow(0 0 12px rgba(76,195,214,.55)); }
+#brand h1 {
+  font:600 clamp(34px,4.6vw,54px)/1.25 var(--serif); letter-spacing:6px; margin-top:6px;
+  text-shadow:0 0 26px rgba(76,195,214,.45), 0 0 70px rgba(76,195,214,.22);
+}
+#brand p { margin-top:6px; font-size:13.5px; letter-spacing:3px; color:var(--muted); }
+#brand p b { color:var(--accent); font-weight:600; }
+
+#counter { position:absolute; top:26px; right:30px; text-align:right; font-family:var(--mono); }
+#counter .l { display:block; font-size:11px; letter-spacing:2px; color:var(--muted); }
+#counter b { font-size:30px; font-weight:700; color:var(--good); font-variant-numeric:tabular-nums;
+  text-shadow:0 0 16px rgba(63,214,140,.4); display:inline-block; }
+#counter b.bump { animation:bump .35s ease; }
+@keyframes bump { 40% { transform:scale(1.32); } }
+
+#status { position:absolute; left:30px; bottom:26px; font:12px var(--mono); letter-spacing:1.5px; color:var(--muted); }
+#status .dot { display:inline-block; width:9px; height:9px; border-radius:50%; background:var(--good);
+  box-shadow:0 0 0 3px rgba(63,214,140,.15), 0 0 10px rgba(63,214,140,.6); margin-right:8px; vertical-align:middle;
+  animation:pulse 1.6s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity:.4; } }
+
+#logzone { position:absolute; left:0; right:0; bottom:6.5vh; text-align:center; }
+#log { display:flex; flex-direction:column; align-items:center; gap:5px; min-height:96px; justify-content:flex-end; }
+.log-line {
+  display:inline-flex; align-items:center; gap:9px; font:12.5px var(--mono); letter-spacing:.5px;
+  padding:5px 14px; border-radius:99px; border:1px solid rgba(76,195,214,.28);
+  background:rgba(76,195,214,.07); backdrop-filter:blur(4px);
+  animation:logIn .3s ease both;
+}
+.log-line i { width:7px; height:7px; border-radius:50%; background:var(--good); box-shadow:0 0 8px var(--good); }
+.log-line .atk { color:var(--bad); }
+.log-line .term { color:var(--fg); }
+.log-line.out { opacity:0; transform:translateY(-4px); transition:all .55s ease; }
+@keyframes logIn { from { opacity:0; transform:translateY(8px); } }
+#hint { margin-top:12px; font-size:11.5px; letter-spacing:2.5px; color:var(--muted); opacity:.75; }
+
+#enter {
+  all:unset; pointer-events:auto; cursor:pointer; position:absolute; right:30px; bottom:26px;
+  font-size:13px; font-weight:600; letter-spacing:1px; color:var(--accent);
+  border:1px solid rgba(76,195,214,.55); padding:9px 18px; border-radius:8px;
+  background:rgba(76,195,214,.08); transition:all .15s ease;
+}
+#enter:hover { background:rgba(76,195,214,.2); box-shadow:0 0 18px rgba(76,195,214,.25); }
+
+#offline {
+  display:none; position:absolute; left:0; right:0; bottom:14vh; text-align:center;
+  font:12.5px var(--mono); color:#e0a83f; pointer-events:none;
+}
+
+@media (max-width:640px) {
+  #counter { top:18px; right:18px; } #status { left:18px; bottom:18px; } #enter { right:18px; bottom:18px; }
+}
+/* embed（控制台遮罩）模式：右上角让位给父层「跳过」按钮 */
+body.embed #counter { top:66px; }
+@media (prefers-reduced-motion: reduce) {
+  .log-line, #counter b.bump, #status .dot { animation:none; }
+}
+</style>
+</head>
+<body>
+<canvas id="stage"></canvas>
+<div id="hud">
+  <header id="brand">
+    <svg viewBox="0 0 24 24"><path d="M12 2l8 3v6c0 5-3.4 9.4-8 11-4.6-1.6-8-6-8-11V5l8-3z" fill="none" stroke="#4cc3d6" stroke-width="1.3"/><path d="M8.6 12.2l2.4 2.4 4.6-5.2" fill="none" stroke="#3fd68c" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <h1>AICGuard</h1>
+    <p><b>AI 安全护栏</b> · 攻击拦截演示</p>
+  </header>
+  <div id="counter"><span class="l">已拦截 BLOCKED</span><b id="count">0</b></div>
+  <div id="status"><i class="dot"></i>SYSTEM ARMED · 防御在线</div>
+  <div id="logzone">
+    <div id="log"></div>
+    <p id="hint">点击画面 · 发射攻击</p>
+  </div>
+  <button id="enter">进入控制台</button>
+  <div id="offline">⚠ 直接双击打开无法加载渲染库——请运行 node ts/src/server.ts 后访问 http://127.0.0.1:7777/intro.html</div>
+</div>
+
+<script>
+// file:// 下 ES module 会被浏览器拦（origin null），用普通脚本给出指引
+if (location.protocol === "file:") {
+  document.getElementById("offline").style.display = "block";
+  document.getElementById("enter").style.display = "none";
+  document.getElementById("hint").style.display = "none";
+}
+</script>
+<script type="importmap">{ "imports": { "three": "./vendor/three.module.min.js" } }</script>
+<script type="module">
+import * as THREE from "three";
+
+/* ================= 常量与环境 ================= */
+const SHIELD_R = 2.35;                       // 护盾半径（拦截判定面）
+const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const embed = new URLSearchParams(location.search).has("embed"); // 控制台遮罩模式
+if (embed) document.body.classList.add("embed");
+const CYAN = new THREE.Color(0x4cc3d6), WHITE = new THREE.Color(0xffffff);
+const RED  = new THREE.Color(0xff6b78), GREEN = new THREE.Color(0x3fd68c);
+
+// 弹种 → 拦截术语（与控制台/演示脚本同一套产品语言）
+const KINDS = [
+  { atk: "直接注入",  term: "已拦截 · 输入侧 · G1 block" },
+  { atk: "编码混淆",  term: "已重写 · 规范化 · N1 rewrite" },
+  { atk: "工具滥用",  term: "已拦截 · 工具护栏 · G3 deny" },
+  { atk: "链式诱导",  term: "已拦截 · agent 链路 · G4" },
+];
+
+/* ================= 渲染基础 ================= */
+const canvas = document.getElementById("stage");
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+const camBase = new THREE.Vector3(0, 0.55, 7.4);
+camera.position.copy(camBase);
+camera.lookAt(0, 0, 0);
+
+function resize() {
+  renderer.setSize(innerWidth, innerHeight);
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+}
+addEventListener("resize", resize); resize();
+
+// 径向渐变圆点纹理：粒子与辉光的通用"光斑"
+function glowTexture(r, g, b) {
+  const c = document.createElement("canvas"); c.width = c.height = 128;
+  const ctx = c.getContext("2d");
+  const grad = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
+  grad.addColorStop(0, `rgba(255,255,255,1)`);
+  grad.addColorStop(0.25, `rgba(${r},${g},${b},.9)`);
+  grad.addColorStop(0.55, `rgba(${r},${g},${b},.28)`);
+  grad.addColorStop(1, `rgba(${r},${g},${b},0)`);
+  ctx.fillStyle = grad; ctx.fillRect(0, 0, 128, 128);
+  const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace;
+  return tex;
+}
+const texCyan = glowTexture(76, 195, 214), texRed = glowTexture(255, 107, 120);
+
+/* ================= 核心与护盾 ================= */
+const coreGroup = new THREE.Group();
+const core = new THREE.Mesh(
+  new THREE.SphereGeometry(0.42, 32, 32),
+  new THREE.MeshBasicMaterial({ color: 0xbdf0f8 })
+);
+coreGroup.add(core);
+for (const [scale, opacity] of [[1.7, 0.85], [3.2, 0.35], [5.4, 0.14]]) {
+  const halo = new THREE.Sprite(new THREE.SpriteMaterial({
+    map: texCyan, blending: THREE.AdditiveBlending, depthWrite: false,
+    transparent: true, opacity,
+  }));
+  halo.scale.setScalar(scale);
+  coreGroup.add(halo);
+}
+scene.add(coreGroup);
+
+// 粒子护盾：fibonacci 球面均匀分布
+const N = 1200;
+const shieldPos = new Float32Array(N * 3), shieldCol = new Float32Array(N * 3);
+const baseCol = new Float32Array(N * 3), unitDirs = [];
+{
+  const ga = Math.PI * (3 - Math.sqrt(5));
+  for (let i = 0; i < N; i++) {
+    const y = 1 - (i / (N - 1)) * 2;
+    const r = Math.sqrt(1 - y * y), th = ga * i;
+    const x = Math.cos(th) * r, z = Math.sin(th) * r;
+    unitDirs.push(new THREE.Vector3(x, y, z));
+    shieldPos.set([x * SHIELD_R, y * SHIELD_R, z * SHIELD_R], i * 3);
+    // 底色：暗青随机亮度，8% 接近白的亮星
+    const b = Math.random() < 0.08 ? 0.95 : 0.3 + Math.random() * 0.5;
+    const c = CYAN.clone().multiplyScalar(b).lerp(WHITE, b > 0.9 ? 0.6 : 0);
+    baseCol.set([c.r, c.g, c.b], i * 3);
+    shieldCol.set([c.r, c.g, c.b], i * 3);
+  }
+}
+const shieldGeo = new THREE.BufferGeometry();
+shieldGeo.setAttribute("position", new THREE.BufferAttribute(shieldPos, 3));
+shieldGeo.setAttribute("color", new THREE.BufferAttribute(shieldCol, 3));
+const shield = new THREE.Points(shieldGeo, new THREE.PointsMaterial({
+  size: 0.05, vertexColors: true, map: texCyan, transparent: true,
+  blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true,
+}));
+scene.add(shield);
+
+// 外圈细线框：让"盾"更可辨识
+const wire = new THREE.Mesh(
+  new THREE.IcosahedronGeometry(SHIELD_R, 1),
+  new THREE.MeshBasicMaterial({ color: CYAN, wireframe: true, transparent: true, opacity: 0.06 })
+);
+scene.add(wire);
+
+// 星尘背景
+{
+  const M = 700, pos = new Float32Array(M * 3);
+  for (let i = 0; i < M; i++) {
+    const v = new THREE.Vector3().randomDirection().multiplyScalar(7 + Math.random() * 13);
+    pos.set([v.x, v.y, v.z], i * 3);
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+  scene.add(new THREE.Points(g, new THREE.PointsMaterial({
+    size: 0.03, color: 0x8fa0b3, map: texCyan, transparent: true, opacity: 0.5,
+    blending: THREE.AdditiveBlending, depthWrite: false,
+  })));
+}
+
+/* ================= 攻击 / 拦截 / 碎屑 ================= */
+const attacks = [], rings = [], debrisClouds = [], excitements = [];
+let blocked = 0;
+
+function spawnAttack(fromPoint) {
+  const start = fromPoint.clone();
+  const sprite = new THREE.Sprite(new THREE.SpriteMaterial({
+    map: texRed, blending: THREE.AdditiveBlending, depthWrite: false,
+    transparent: true, opacity: 0.95, color: 0xff8a94,
+  }));
+  sprite.scale.setScalar(0.42); sprite.position.copy(start);
+  // 尾迹：14 点环形缓冲，顶点色自带首亮尾暗
+  const TRAIL = 14, tp = new Float32Array(TRAIL * 3), tc = new Float32Array(TRAIL * 3);
+  for (let i = 0; i < TRAIL; i++) {
+    tp.set([start.x, start.y, start.z], i * 3);
+    const a = Math.pow(1 - i / TRAIL, 1.6) * 0.8;
+    tc.set([1 * a, 0.45 * a, 0.5 * a], i * 3);
+  }
+  const tg = new THREE.BufferGeometry();
+  tg.setAttribute("position", new THREE.BufferAttribute(tp, 3));
+  tg.setAttribute("color", new THREE.BufferAttribute(tc, 3));
+  const trail = new THREE.Points(tg, new THREE.PointsMaterial({
+    size: 0.14, vertexColors: true, map: texRed, transparent: true,
+    blending: THREE.AdditiveBlending, depthWrite: false,
+  }));
+  scene.add(sprite, trail);
+  const vel = start.clone().negate().normalize().multiplyScalar(3.4 + Math.random() * 0.9);
+  attacks.push({ sprite, trail, tp, vel });
+}
+
+function makeRing(pos, dir, color, maxSpread, dur, billboard) {
+  const mesh = new THREE.Mesh(
+    new THREE.RingGeometry(0.88, 1.0, 56),
+    new THREE.MeshBasicMaterial({
+      color, transparent: true, opacity: 0.9, side: THREE.DoubleSide,
+      blending: THREE.AdditiveBlending, depthWrite: false,
+    })
+  );
+  mesh.position.copy(pos);
+  if (!billboard) mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), dir);
+  scene.add(mesh);
+  rings.push({ mesh, age: 0, dur, maxSpread, billboard });
+}
+
+function detonate(atk) {
+  const pos = atk.sprite.position.clone();
+  const dir = pos.clone().normalize();
+  pos.copy(dir).multiplyScalar(SHIELD_R);            // 贴到盾面
+  makeRing(pos, dir, CYAN, 0.65, 0.7, false);        // 盾面法向波澜（回退观感，稍大一档）
+  // 碎屑水花：沿反射方向锥形散开
+  const n = 64, p = new Float32Array(n * 3), vels = [];
+  const normal = dir, inc = atk.vel.clone().normalize();
+  const refl = inc.clone().sub(normal.clone().multiplyScalar(2 * inc.dot(normal))); // 反射
+  for (let i = 0; i < n; i++) {
+    p.set([pos.x, pos.y, pos.z], i * 3);
+    const v = refl.clone()
+      .add(new THREE.Vector3().randomDirection().multiplyScalar(1.3))
+      .normalize().multiplyScalar(2.2 + Math.random() * 2.6);
+    vels.push(v);
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute("position", new THREE.BufferAttribute(p, 3));
+  const cloud = new THREE.Points(g, new THREE.PointsMaterial({
+    size: 0.12, color: 0x7df0c0, map: texCyan, transparent: true,
+    blending: THREE.AdditiveBlending, depthWrite: false,
+  }));
+  scene.add(cloud);
+  debrisClouds.push({ cloud, vels, age: 0, dur: 1.05 });
+  excitements.push({ dir, t0: tNow });               // 盾面局部亮起
+  scene.remove(atk.sprite, atk.trail);
+  atk.trail.geometry.dispose(); atk.sprite.material.dispose();
+  // HUD：日志 + 计数
+  const kind = KINDS[Math.floor(Math.random() * KINDS.length)];
+  pushLog(kind); bumpCount();
+}
+
+/* ================= HUD ================= */
+const logEl = document.getElementById("log"), countEl = document.getElementById("count");
+function pushLog(kind) {
+  const line = document.createElement("div");
+  line.className = "log-line";
+  line.innerHTML = `<i></i><span class="atk">${kind.atk}</span><span class="term">${kind.term}</span>`;
+  logEl.prepend(line);
+  while (logEl.children.length > 3) logEl.lastChild.remove();
+  setTimeout(() => { line.classList.add("out"); setTimeout(() => line.remove(), 600); }, 5200);
+}
+function bumpCount() {
+  blocked++;
+  countEl.textContent = blocked;
+  countEl.classList.remove("bump"); void countEl.offsetWidth; countEl.classList.add("bump");
+}
+
+/* ================= 交互 ================= */
+const raycaster = new THREE.Vector3();
+let lastClick = 0;
+canvas.addEventListener("pointerdown", (e) => {
+  if (exited) return;
+  const now = performance.now();
+  if (now - lastClick < 300) return;                 // 冷却防连点糊屏
+  lastClick = now;
+  raycaster.set((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1, 0.5)
+    .unproject(camera).sub(camera.position).normalize();
+  // 发射方位向画面中心收拢：弹仍从点击一侧飞来，但爆点落在盾面可见区——
+  // 贴盾面法向的波澜环只在爆点朝向镜头时才看得见（轮廓边缘会侧成一条线）
+  const pNear = camera.position.clone()
+    .addScaledVector(raycaster, -camera.position.dot(raycaster));
+  if (pNear.lengthSq() < 0.1) pNear.set(0.3, 0.2, 1); // 点正中心时的兜底方位
+  const camDir = camera.position.clone().negate().normalize(); // 相机 → 核心
+  const from = pNear.normalize().add(camDir).normalize().multiplyScalar(11);
+  spawnAttack(from);
+  makeRing(from, raycaster.clone(), RED, 0.85, 0.5, true); // 点击涟漪（红色、面向相机）
+});
+
+let exited = false;
+function exit() {
+  if (exited) return; exited = true;
+  document.body.classList.add("bye");
+  setTimeout(() => {
+    if (embed) parent.postMessage({ type: "aicguard-intro:exit" }, "*");
+    else location.href = "console.html";
+  }, 480);
+}
+document.getElementById("enter").addEventListener("click", exit);
+addEventListener("keydown", (e) => {
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+  if (e.key.length > 1 && !["Enter", "Escape", " "].includes(e.key)) return; // 放过 F5/F11 等
+  exit();
+});
+
+// 鼠标视差
+let mx = 0, my = 0;
+addEventListener("pointermove", (e) => {
+  mx = (e.clientX / innerWidth) * 2 - 1;
+  my = (e.clientY / innerHeight) * 2 - 1;
+});
+
+/* ================= 波次调度 ================= */
+// 自动波方向限制在面向镜头的半球（爆点大多落在盾面可见区，波澜看得见）
+function waveFrom() {
+  const camDir = camera.position.clone().negate().normalize();
+  for (let i = 0; i < 12; i++) {
+    const d = new THREE.Vector3().randomDirection();
+    if (d.dot(camDir) > 0.45) return d.multiplyScalar(9.5 + Math.random() * 2);
+  }
+  return camDir.clone().multiplyScalar(9.5 + Math.random() * 2);
+}
+function scheduleWave() {
+  const delay = reduced ? 4500 + Math.random() * 2000 : 2200 + Math.random() * 1200;
+  setTimeout(() => {
+    if (!document.hidden && !exited) {
+      const n = reduced ? 1 : Math.random() < 0.45 ? 2 : 1;
+      for (let i = 0; i < n; i++) spawnAttack(waveFrom());
+    }
+    scheduleWave();
+  }, delay);
+}
+scheduleWave();
+
+/* ================= 主循环 ================= */
+const clock = new THREE.Clock();
+let tNow = 0;
+const boostC = new THREE.Color();
+function frame() {
+  requestAnimationFrame(frame);
+  const dt = Math.min(clock.getDelta(), 0.05);
+  tNow += dt;
+  const t = tNow;
+
+  // 核心脉动 + 护盾自转呼吸
+  coreGroup.scale.setScalar(1 + (reduced ? 0.02 : 0.06) * Math.sin(t * 1.4));
+  shield.rotation.y = t * (reduced ? 0.02 : 0.06);
+  shield.rotation.x = Math.sin(t * 0.11) * 0.12;
+  shield.scale.setScalar(1 + (reduced ? 0 : 0.018) * Math.sin(t * 0.8));
+  wire.rotation.y = -t * 0.03;
+  wire.rotation.z = t * 0.015;
+
+  // 盾面激发：靠近爆点方向的粒子短促提亮
+  for (let i = excitements.length - 1; i >= 0; i--) {
+    if (tNow - excitements[i].t0 > 0.7) excitements.splice(i, 1);
+  }
+  if (excitements.length) {
+    for (let i = 0; i < N; i++) {
+      let boost = 0;
+      const d = unitDirs[i];
+      for (const ex of excitements) {
+        const e = 1 - (tNow - ex.t0) / 0.7;
+        boost += Math.max(0, e) * Math.pow(Math.max(0, d.dot(ex.dir)), 20);
+      }
+      boostC.setRGB(
+        baseCol[i * 3] + boost * 0.9,
+        baseCol[i * 3 + 1] + boost * 1.0,
+        baseCol[i * 3 + 2] + boost * 1.0
+      );
+      shieldCol.set([boostC.r, boostC.g, boostC.b], i * 3);
+    }
+    shieldGeo.attributes.color.needsUpdate = true;
+  }
+
+  // 攻击弹：飞行 + 尾迹滚动 + 拦截判定
+  for (let i = attacks.length - 1; i >= 0; i--) {
+    const a = attacks[i];
+    a.sprite.position.addScaledVector(a.vel, dt);
+    const tp = a.tp;
+    tp.copyWithin(3, 0, tp.length - 3);              // 尾迹整体后移
+    tp[0] = a.sprite.position.x; tp[1] = a.sprite.position.y; tp[2] = a.sprite.position.z;
+    a.trail.geometry.attributes.position.needsUpdate = true;
+    if (a.sprite.position.length() <= SHIELD_R + 0.02) {
+      detonate(a); attacks.splice(i, 1);
+    }
+  }
+
+  // 冲击环 / 点击涟漪：扩散淡出
+  for (let i = rings.length - 1; i >= 0; i--) {
+    const r = rings[i];
+    r.age += dt;
+    const k = r.age / r.dur;
+    if (k >= 1) {
+      scene.remove(r.mesh); r.mesh.geometry.dispose(); r.mesh.material.dispose();
+      rings.splice(i, 1); continue;
+    }
+    // 涟漪先快后慢张开（easeOut）；盾面波澜沿法向泛开，点击涟漪面向相机
+    const spread = (1 - Math.pow(1 - k, 2.2)) * r.maxSpread;
+    r.mesh.scale.setScalar(0.15 + spread);
+    r.mesh.material.opacity = (1 - k) * 0.85;
+    if (r.billboard) r.mesh.lookAt(camera.position);
+  }
+
+  // 碎屑：反射散开 + 阻尼 + 淡出
+  for (let i = debrisClouds.length - 1; i >= 0; i--) {
+    const d = debrisClouds[i];
+    d.age += dt;
+    const k = d.age / d.dur;
+    if (k >= 1) {
+      scene.remove(d.cloud); d.cloud.geometry.dispose(); d.cloud.material.dispose();
+      debrisClouds.splice(i, 1); continue;
+    }
+    const p = d.cloud.geometry.attributes.position;
+    for (let j = 0; j < d.vels.length; j++) {
+      d.vels[j].multiplyScalar(Math.pow(0.42, dt));    // 阻尼放缓，水花飞得更远
+      p.setXYZ(j, p.getX(j) + d.vels[j].x * dt, p.getY(j) + d.vels[j].y * dt, p.getZ(j) + d.vels[j].z * dt);
+    }
+    p.needsUpdate = true;
+    d.cloud.material.color = GREEN.clone().multiplyScalar(1 - k);
+    d.cloud.material.opacity = 1 - k;
+  }
+
+  // 相机视差
+  camera.position.x += (camBase.x + mx * 0.5 - camera.position.x) * 0.05;
+  camera.position.y += (camBase.y - my * 0.35 - camera.position.y) * 0.05;
+  camera.lookAt(0, 0, 0);
+
+  renderer.render(scene, camera);
+}
+frame();
+</script>
+</body>
+</html>

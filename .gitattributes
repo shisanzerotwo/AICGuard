@@ -1,0 +1,29 @@
+# 行尾统一：仓库内文本文件一律以 LF 存储、以 LF 检出。
+# 背景：2026-10-12 独立审查发现 58 个已跟踪文件在工作区被外部工具改写成 CRLF，
+# 使 git status 长期为脏、每次 diff/commit 混入 7842 行纯行尾噪音。
+# 处置依据：docs/15-可信度修复与RAG评测开发交接.md §0 / §6 决策 2 / 附录 A T3。
+# 注意：本文件只影响 git 的存储与检出行为，不修改任何文件的内容字节。
+* text=auto eol=lf
+
+# 二进制资产显式声明，避免被 text=auto 误判为文本后转换行尾而损坏
+# （参赛材料 PDF/PPT 与媒体文件是提交物，必须零风险）
+*.pdf   binary
+*.ppt   binary
+*.pptx  binary
+*.doc   binary
+*.docx  binary
+*.xls   binary
+*.xlsx  binary
+*.zip   binary
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.webp  binary
+*.ico   binary
+*.mp3   binary
+*.mp4   binary
+*.webm  binary
+*.ttf   binary
+*.woff  binary
+*.woff2 binary
