@@ -100,7 +100,7 @@ body.embed #counter { top:66px; }
     <div id="log"></div>
     <p id="hint">点击画面 · 发射攻击</p>
   </div>
-  <button id="enter">进入控制台</button>
+  <button id="enter">查看体检报告</button>
   <div id="offline">⚠ 直接双击打开无法加载渲染库——请运行 node ts/src/server.ts 后访问 http://127.0.0.1:7777/intro.html</div>
 </div>
 
@@ -350,7 +350,7 @@ function exit() {
   document.body.classList.add("bye");
   setTimeout(() => {
     if (embed) parent.postMessage({ type: "aicguard-intro:exit" }, "*");
-    else location.href = "console.html";
+    else location.href = "/report";
   }, 480);
 }
 document.getElementById("enter").addEventListener("click", exit);
